@@ -2,14 +2,17 @@ package com.lzw.coolweather.util;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.lzw.coolweather.db.City;
 import com.lzw.coolweather.db.County;
 import com.lzw.coolweather.db.Province;
+import com.lzw.coolweather.gson.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Utility {
+
     public static boolean handleProvinceResponse(String response){
         try{
             if(TextUtils.isEmpty(response)==false){
@@ -71,4 +74,18 @@ public class Utility {
         }
         return false;
     }
+
+    public static Weather handleWeatherResponse(String response){
+        try{
+            JSONObject jsonObject=new JSONObject(response);
+            JSONArray jsonArray=jsonObject.getJSONArray("HeWeather");
+            String heWeather=jsonArray.getJSONObject(0).toString();
+            return new Gson().fromJson(heWeather,Weather.class);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
