@@ -4,15 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.lzw.coolweather.gson.Forecast;
 import com.lzw.coolweather.gson.Weather;
 import com.lzw.coolweather.util.HttpUtil;
@@ -25,8 +30,9 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class WeatherActivity extends AppCompatActivity {
-
+    private static final String TAG = "WeatherActivity";
     public static final String WEATHER = "weather";
+    public static final String BING_PIC = "bing_pic";
 
     ScrollView weatherLayout;
     TextView titleCity;
@@ -39,10 +45,18 @@ public class WeatherActivity extends AppCompatActivity {
     TextView comfortText;
     TextView carWashText;
     TextView sportText;
+    ImageView backgroundImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(Build.VERSION.SDK_INT>=21){
+            View view=getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
+
         setContentView(R.layout.activity_weather);
         weatherLayout=findViewById(R.id.weather_layout);
         titleCity=findViewById(R.id.title_city);
@@ -55,6 +69,7 @@ public class WeatherActivity extends AppCompatActivity {
         comfortText=findViewById(R.id.comfort_text);
         carWashText=findViewById(R.id.car_wash_text);
         sportText=findViewById(R.id.sport_text);
+        backgroundImage=findViewById(R.id.bing_pic_img);
 
         SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(this);
         String weatherStr=pref.getString(WEATHER,"无缓存");//从本地读取
@@ -68,6 +83,8 @@ public class WeatherActivity extends AppCompatActivity {
             Weather weather= Utility.handleWeatherResponse(weatherStr);
             showWeatherInfo(weather);
         }
+        //随机图形
+        Glide.with(this).load("https://bing.ioliu.cn/v1").into(backgroundImage);
     }
 
     private void showWeatherInfo(Weather weather) {
