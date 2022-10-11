@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <service
-            android:name=".AutoUpdateService"
+            android:name=".service.AutoUpdateService"
             android:enabled="true"
             android:exported="true"></service>
 
